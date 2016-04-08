@@ -97,6 +97,7 @@ GameObject:
   - 92: {fileID: 308833225}
   - 124: {fileID: 308833224}
   - 81: {fileID: 308833223}
+  - 114: {fileID: 308833228}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -171,6 +172,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!114 &308833228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 308833222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68b18a947a1bf2345bb17c0b25a39180, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  target: {fileID: 0}
+  lookAtPlayer: 0
 --- !u!1 &360420277 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 187576, guid: e62c8250bd357aa40ac8e44e9a5e8ab5, type: 2}
@@ -186,10 +201,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5caed6d9fa22d864ca2afe6c72449d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  pc: {fileID: 0}
   timer: 0
   canvasText: {fileID: 0}
   scoreText: {fileID: 1568459229}
   origFontSize: 0
+  collectables: []
+  collectablesAmount: 0
 --- !u!1001 &466073790
 Prefab:
   m_ObjectHideFlags: 0

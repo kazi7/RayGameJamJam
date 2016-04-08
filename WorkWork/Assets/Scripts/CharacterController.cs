@@ -11,6 +11,8 @@ public class CharacterController : MonoBehaviour {
     private Quaternion targetRotation;
     private Rigidbody rb;
 
+    private int score;
+
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody>();
@@ -21,8 +23,19 @@ public class CharacterController : MonoBehaviour {
 	void Update () {
         Controls();
 
-
 	}
+
+    void OnCollision(Collider coll)
+    {
+        switch (coll.tag)
+        {
+            case "goods":
+                {
+                    score += 10;
+                }
+                break;
+        }
+    }
 
     void Controls()
     {
@@ -35,5 +48,10 @@ public class CharacterController : MonoBehaviour {
             rb.AddForce(Vector3.up * jumpStrength);
            
         }
+    }
+
+    public int GetScore()
+    {
+        return score;
     }
 }
