@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public GameObject Player;
     public PlayerController cc;
 
+
+    private int cumulativeScore;
     private int finalScore;
     bool loadNextScene;
 
@@ -42,6 +44,8 @@ public class GameManager : MonoBehaviour
     //CANVAS FOR SHOWING THE FINAL LEVEL SCORE
     private bool createCanvas;
     private GameObject endCanvasGO;
+    private GameObject finishTitleGO;
+    private Text finishTitleTXT;
     private GameObject endScoreTextGO;
     private Text endScoreTextTXT;
     private GameObject endGradeTextGO;
@@ -54,6 +58,9 @@ public class GameManager : MonoBehaviour
     bool waitForNextScene;
 
     //SCENE DATA
+    private int LastLoadedScene;
+    private float sceneLoadTimer;
+    private bool startSceneLoadTimer;
     private int sceneToLoad;
 
     void Awake()
@@ -64,8 +71,132 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        CreateListOfGrades();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (LastLoadedScene >= 2)
+        {
+            if (!waitForNextScene)
+            {
+                if (!loadNextScene)
+                {
+                    if (!endGame)
+                    {
+                        TimerBehavior();
+
+                        if (Input.GetKeyDown(KeyCode.Return))
+                        {
+                            SpawnCollectables();
+                            startTimer = true;
+                        }
+
+                        if (collectablesLeft == 0 && startTimer)
+                        {
+                            GameOver();
+                        }
+
+                    }
+                    if (endGame)
+                    {
+                        //do stuff on endgame
+
+                        int tempCounter = 5;
+                        cc.EndGame();
+
+                        if (createCanvas && !startTimer)
+                            CreateEndCanvas();
+                        if (collectablesLeft > 0)
+                            finishTitleTXT.text = "END";
+
+                        if (startBonusTimer && bonusTimer > 0)
+                            bonusTimer -= 1.0f * Time.deltaTime;
+
+                        if (startFinalScoreCalc && startFinalScoreTimer > 0)
+                            startFinalScoreTimer -= 1.0f * Time.deltaTime;
+
+                        if (startGradeTimer && GradeTimer > 0)
+                            GradeTimer -= 1.0f * Time.deltaTime;
+
+                        bool calculationFinished = cc.CalculateScore(tempCounter);
+                        if (!calculationFinished)
+                        {
+                            finalScore += tempCounter;
+                        }
+                        else
+                        {
+                            startBonusTimer = true;
+                        }
+                        int bonus = 0;
+                        if (calculationFinished && bonusTimer <= 0)
+                        {
+                            endScoreTitleTXT.text = "SCORE";
+                            bonus = 1 + (int)timer;
+                            string bonusCoefficent = bonus.ToString() + "x";
+                            endBonusTitleTXT.text = bonusCoefficent;
+                            startFinalScoreCalc = true;
+                            calculationFinished = false;
+                        }
+                        if (startFinalScoreTimer <= 0 && !skipFinalScoreCalc)
+                        {
+                            finalScore *= bonus;
+                            endScoreTextTXT.fontSize = 40;
+                            startGradeTimer = true;
+                            skipFinalScoreCalc = true;
+                        }
+                        if (GradeTimer <= 0)
+                        {
+                            ChooseGradeText();
+                            loadNextScene = true;
+                            startSceneLoadTimer = true;
+                        }
+                        endScoreTextTXT.text = finalScore.ToString();
+                    }
+                    if (Player != null)
+                        scoreText.text = cc.GetScore().ToString();
+                }
+                else
+                {
+                    LoadNextScene();
+                }
+            }
+            else
+            {
+                endGradeTextTXT.fontSize += 2;
+                if (sceneLoadTimer > 0)
+                    sceneLoadTimer -= 1.0f * Time.deltaTime;
+                if (sceneToLoad != 0 && sceneLoadTimer <= 0)
+                {
+                    SceneManager.LoadScene(sceneToLoad);
+                }
+            }
+        }
+    }
+
+    void OnLevelWasLoaded(int level)
+    {
+        print("LOADED LEVEL: " + level);
+
+        LastLoadedScene = level;
+
+        if (level >= 2)
+            SceneStart();
+
+        if (collectablesLeft <= 0)
+            sceneToLoad = level + 1;
+        else
+            sceneToLoad = 1;
+    }
+
+    void SceneStart()
+    {
+        CreateGameUI();
+
         Player = GameObject.Find("Player");
-        cc = Player.GetComponent<PlayerController>();
+        if (Player != null)
+            cc = Player.GetComponent<PlayerController>();
 
         canvasTimerText = GameObject.Find("TimerText");
         timerText = canvasTimerText.GetComponent<Text>();
@@ -81,6 +212,7 @@ public class GameManager : MonoBehaviour
         startGradeTimer = false;
         skipFinalScoreCalc = false;
         waitForNextScene = false;
+        startSceneLoadTimer = false;
 
         timer = 10.0f;
         origFontSize = 40;
@@ -88,105 +220,17 @@ public class GameManager : MonoBehaviour
         bonusTimer = 1.0f;
         startFinalScoreTimer = 1.0f;
         GradeTimer = 1.0f;
+        sceneLoadTimer = 1.0f;
         sceneToLoad = 1;
 
         collectablesLeft = collectablesAmount;
-
-        CreateListOfGrades();
     }
 
-    // Update is called once per frame
-    void Update()
+    void CreateGameUI()
     {
-        if (!waitForNextScene)
-        {
-            if (!loadNextScene)
-            {
-                if (!endGame)
-                {
-                    TimerBehavior();
-
-                    if (Input.GetKeyDown(KeyCode.Return))
-                    {
-                        SpawnCollectables();
-                        startTimer = true;
-                    }
-
-                    if (collectablesLeft == 0 && startTimer)
-                    {
-                        startTimer = false;
-                        endGame = true;
-                    }
-
-                }
-                if (endGame)
-                {
-                    //do stuff on endgame
-
-                    int tempCounter = 5;
-                    cc.EndGame();
-
-                    if (createCanvas && !startTimer)
-                        CreateEndCanvas();
-
-                    if (startBonusTimer && bonusTimer > 0)
-                        bonusTimer -= 1.0f * Time.deltaTime;
-
-                    if (startFinalScoreCalc && startFinalScoreTimer > 0)
-                        startFinalScoreTimer -= 1.0f * Time.deltaTime;
-
-                    if (startGradeTimer && GradeTimer > 0)
-                        GradeTimer -= 1.0f * Time.deltaTime;
-
-                    bool calculationFinished = cc.CalculateScore(tempCounter);
-                    if (!calculationFinished)
-                    {
-                        finalScore += tempCounter;
-                    }
-                    else
-                    {
-                        startBonusTimer = true;
-                    }
-                    int bonus = 0;
-                    if (calculationFinished && bonusTimer <= 0)
-                    {
-                        endScoreTitleTXT.text = "SCORE";
-                        bonus = 1 + (int)timer;
-                        string bonusCoefficent = bonus.ToString() + "x";
-                        endBonusTitleTXT.text = bonusCoefficent;
-                        startFinalScoreCalc = true;
-                        calculationFinished = false;
-                    }
-                    if (startFinalScoreTimer <= 0 && !skipFinalScoreCalc)
-                    {
-                        finalScore *= bonus;
-                        startGradeTimer = true;
-                        skipFinalScoreCalc = true;
-                    }
-                    if (GradeTimer <= 0)
-                    {
-                        ChooseGradeText();
-                        loadNextScene = true;
-                    }
-                    endScoreTextTXT.text = finalScore.ToString();
-                }
-                scoreText.text = cc.GetScore().ToString();
-            }
-            else
-            {
-                if (sceneToLoad != 0)
-                {
-                    SceneManager.LoadScene(sceneToLoad);
-                }
-                waitForNextScene = true;
-            }
-        }
-        else
-        {
-
-        }
-
-
+        //Canvas for showing the end score
+        GameObject gameUI = Resources.Load<GameObject>("GameUI");
+        endCanvasGO = GameObject.Instantiate(gameUI) as GameObject;
     }
 
     void CreateListOfGrades()
@@ -238,6 +282,19 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void LoadNextScene()
+    {
+        cumulativeScore += finalScore;
+        waitForNextScene = true;
+    }
+
+    void GameOver()
+    {
+        print("GAME OVER GAME OVER");
+        startTimer = false;
+        endGame = true;
+    }
+
     string GetGrade(int result)
     {
         string finalGrade = "";
@@ -277,6 +334,8 @@ public class GameManager : MonoBehaviour
 
     void TimerBehavior()
     {
+        bool roundUp = false;
+
         if (startTimer)
         {
             if (timer > 0)
@@ -284,18 +343,47 @@ public class GameManager : MonoBehaviour
             if (timer <= 0)
                 timer = 0;
         }
-
-
-        if (timer < 5.05f && timer > 4.95f)
+        if (timer < 3.10f && timer > 2.95f)
+        {
             timerText.fontSize = 60;
-        if (timer < 4.95f)
+            roundUp = true;
+        }
+        if (timer < 2.95f && timer > 2.10f)
+        {
             timerText.fontSize = origFontSize;
+        }
+        if (timer < 2.10f && timer > 1.95f)
+        {
+            timerText.fontSize = 60;
+            roundUp = true;
+        }
+        if (timer < 1.95f && timer > 1.10f)
+        {
+            timerText.fontSize = origFontSize;
+        }
+        if (timer < 1.10f && timer > 0.95f)
+        {
+            timerText.fontSize = 60;
+            roundUp = true;
+        }
+        if (timer < 0.95f && timer > 0)
+        {
+            timerText.fontSize = origFontSize;
+        }
 
-        if (timerText != null)
-            timerText.text = timer.ToString("F2");
+        if (roundUp)
+        {
+            if (timerText != null)
+                timerText.text = timer.ToString("F0");
+        }
+        else
+        {
+            if (timerText != null)
+                timerText.text = timer.ToString("F2");
+        }
 
         if (timer <= 0)
-            endGame = true;
+            GameOver();
     }
 
     void CreateEndCanvas()
@@ -304,6 +392,8 @@ public class GameManager : MonoBehaviour
         GameObject canvasPF = Resources.Load<GameObject>("EndCanvas");
         endCanvasGO = GameObject.Instantiate(canvasPF) as GameObject;
 
+        finishTitleGO = GameObject.Find("FinishTitle");
+        finishTitleTXT = finishTitleGO.GetComponent<Text>();
         endScoreTextGO = GameObject.Find("EndScoreText");
         endScoreTextTXT = endScoreTextGO.GetComponent<Text>();
         endGradeTextGO = GameObject.Find("EndGradeText");
