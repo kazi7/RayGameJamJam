@@ -227,8 +227,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 308833222}
-  m_LocalRotation: {x: 0.50000006, y: 0, z: 0, w: 0.8660254}
-  m_LocalPosition: {x: 0, y: 22.87, z: -17.96}
+  m_LocalRotation: {x: -0.4621635, y: -0.00000028895442, z: 0.00000015059199, w: -0.88679475}
+  m_LocalPosition: {x: -0.16, y: 18.34, z: -18.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   target: {fileID: 0}
-  lookAtPlayer: 1
+  lookAtPlayer: 0
 --- !u!1 &360420277 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 187576, guid: e62c8250bd357aa40ac8e44e9a5e8ab5, type: 2}
@@ -263,11 +263,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
-  cc: {fileID: 0}
+  pc: {fileID: 0}
   timer: 0
-  canvasTimerText: {fileID: 0}
-  timerText: {fileID: 0}
-  canvasScoreText: {fileID: 0}
+  canvasText: {fileID: 0}
   scoreText: {fileID: 1568459229}
   origFontSize: 0
   collectables: []
