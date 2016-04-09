@@ -13,12 +13,19 @@ public class CameraBehavior : MonoBehaviour {
 
         player = GameObject.Find("Player");
         target = player.transform;
+        transform.Rotate(Vector3.forward, 0.500f, Space.World);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
         if (lookAtPlayer)
-            transform.LookAt(target);
+        {
+            if (transform.rotation.x < 0.535f && transform.rotation.x > 0.495f)
+            {
+                transform.LookAt(target);
+            }
+
+        }
 	}
 }

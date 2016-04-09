@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     private GameObject gm;
 
@@ -9,6 +9,7 @@ public class CharacterController : MonoBehaviour
     public float jumpStrength = 10.0f;
     public float interactSpeed = 0.2f;
 
+    private bool canJump;
 
     private Quaternion targetRotation;
     private Rigidbody rb;
@@ -22,6 +23,7 @@ public class CharacterController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         gm = GameObject.Find("Manager");
         endGame = false;
+        canJump = true;
 	}
 	
 	// Update is called once per frame
@@ -29,9 +31,6 @@ public class CharacterController : MonoBehaviour
         if (!endGame)
         {
             Controls();
-
-
-
         }
 	}
 
@@ -46,6 +45,11 @@ public class CharacterController : MonoBehaviour
                     gm.GetComponent<GameManager>().MinusCollectable();
                 }
                 break;
+            case "ground":
+                {
+                    canJump = true;
+                }
+                break;
         }
 
     }
@@ -56,10 +60,13 @@ public class CharacterController : MonoBehaviour
         Vector3 moveAngle = new Vector3(0, +0, 45);
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
 
-        if (Input.GetButtonDown("Jump"))
+        if (canJump)
         {
-            rb.AddForce(Vector3.up * jumpStrength);
-           
+            if (Input.GetButtonDown("Jump"))
+            {
+                rb.AddForce(Vector3.up * jumpStrength);
+                canJump = false;
+            }
         }
     }
 
@@ -71,5 +78,22 @@ public class CharacterController : MonoBehaviour
     public void EndGame()
     {
         endGame = true;
+    }
+
+    public bool CalculateScore(int amt)
+    {
+        bool stopAdjusting = false;
+
+        if (score >= amt)
+        {
+            score -= amt;
+            stopAdjusting = false;
+        }
+        if (score <= 0)
+        {
+            score = 0;
+            stopAdjusting = true;
+        }
+        return stopAdjusting;
     }
 }
