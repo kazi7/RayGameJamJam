@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CharacterController : MonoBehaviour {
+public class CharacterController : MonoBehaviour
+{
+    private GameObject gm;
 
     public float moveSpeed = 5.0f;
     public float jumpStrength = 10.0f;
@@ -13,28 +15,39 @@ public class CharacterController : MonoBehaviour {
 
     private int score;
 
+    private bool endGame;
+
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody>();
-	
+        gm = GameObject.Find("Manager");
+        endGame = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        Controls();
+        if (!endGame)
+        {
+            Controls();
 
+
+
+        }
 	}
 
-    void OnCollision(Collider coll)
+    void OnCollisionEnter(Collision coll)
     {
-        switch (coll.tag)
+        switch (coll.transform.tag)
         {
             case "goods":
                 {
-                    score += 10;
+                    Destroy(coll.gameObject);
+                    score += 150;
+                    gm.GetComponent<GameManager>().MinusCollectable();
                 }
                 break;
         }
+
     }
 
     void Controls()
@@ -53,5 +66,10 @@ public class CharacterController : MonoBehaviour {
     public int GetScore()
     {
         return score;
+    }
+
+    public void EndGame()
+    {
+        endGame = true;
     }
 }
