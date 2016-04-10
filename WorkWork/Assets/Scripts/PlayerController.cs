@@ -41,6 +41,10 @@ public class PlayerController : MonoBehaviour
     //ANIMATIONS
     Animator anim;
 
+    //AUDIO
+    AudioSource audio;
+                               
+
     // Use this for initialization
     void Start()
     {
@@ -49,6 +53,8 @@ public class PlayerController : MonoBehaviour
 
         rb = player.GetComponent<Rigidbody>();
         gm = GameObject.Find("Manager");
+
+        audio = player.GetComponent<AudioSource>();
 
         endGame = false;
         canJump = true;
@@ -195,6 +201,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    void OnLevelWasLoaded(int level)
+    {
+        Invoke("PlayMusic", 3.5f);
+    }
+
     public int GetScore()
     {
         return score;
@@ -236,5 +247,10 @@ public class PlayerController : MonoBehaviour
     public bool IsBlockDestroyed()
     {
         return isBlockDestroyed;
+    }
+
+    void PlayMusic()
+    {
+        audio.Play();
     }
 }
