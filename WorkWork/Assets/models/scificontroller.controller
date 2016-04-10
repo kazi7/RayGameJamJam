@@ -27,7 +27,7 @@ AnimatorState:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: New State
+  m_Name: iDLE
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -39,7 +39,7 @@ AnimatorState:
   m_SpeedParameterActive: 0
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: 77afea241418f944ba7c38909f15ca86, type: 3}
+  m_Motion: {fileID: 7400000, guid: f9e29d8e551d44b45be13cdf234c4471, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

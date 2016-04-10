@@ -110,11 +110,11 @@ public class GameManager : MonoBehaviour
                 if (startGameTimer > 0)
                 {
                     flickerTimer++;
-                    startGameTimer -= 1.0f * Time.deltaTime;                    
-                    
+                    startGameTimer -= 1.0f * Time.deltaTime;
+
                     int randomizer = Random.Range(1, 10);
 
-                    switch(LastLoadedScene)
+                    switch (LastLoadedScene)
                     {
                         case 2:
                             {
@@ -266,7 +266,7 @@ public class GameManager : MonoBehaviour
 
         if (LastLoadedScene == 3)
         {
-            if(playerShouldInst)
+            if (playerShouldInst)
             {
                 cc.InstantiateBlock();
                 playerShouldInst = false;
@@ -287,6 +287,138 @@ public class GameManager : MonoBehaviour
                             destroyImageB.enabled = false;
                         else
                             destroyImageB.enabled = true;
+                    }
+                }
+                if (startGameTimer <= 0)
+                {
+                    startGameTimerStart = false;
+                }
+            }
+
+            if (startGameTimer <= 0)
+            {
+                HideIntro();
+
+                if (!waitForNextScene)
+                {
+                    if (!loadNextScene)
+                    {
+                        if (!endGame)
+                        {
+                            TimerBehavior();
+
+                            startTimer = true;
+
+                            if (cc.IsBlockDestroyed())
+                            {
+                                Invoke("GameOver", 1.0f);
+                            }
+                        }
+                        if (endGame)
+                        {
+                            //END GAME
+
+                            int tempCounter = 5;
+                            cc.EndGame();
+
+                            if (createCanvas && !startTimer)
+                                CreateEndCanvas();
+                            if (!cc.IsBlockDestroyed())
+                                finishTitleTXT.text = "END";
+
+                            CalculateTimers();
+
+                            bool calculationFinished = cc.CalculateScore(tempCounter);
+                            if (!calculationFinished)
+                            {
+                                finalScore += tempCounter;
+                            }
+                            else
+                            {
+                                startBonusTimer = true;
+                            }
+
+                            int bonus = 0;
+
+                            if (calculationFinished && bonusTimer <= 0)
+                            {
+                                endScoreTitleTXT.text = "SCORE";
+                                bonus = 1 + (int)timer;
+                                string bonusCoefficent = bonus.ToString() + "x";
+                                endBonusTitleTXT.text = bonusCoefficent;
+                                startFinalScoreCalc = true;
+                                calculationFinished = false;
+                            }
+                            if (startFinalScoreTimer <= 0 && !skipFinalScoreCalc)
+                            {
+                                finalScore *= bonus;
+                                endScoreTextTXT.fontSize = 40;
+                                startGradeTimer = true;
+                                skipFinalScoreCalc = true;
+                            }
+                            if (GradeTimer <= 0)
+                            {
+                                ChooseGradeText();
+                                loadNextScene = true;
+                                startSceneLoadTimer = true;
+                            }
+                            endScoreTextTXT.text = finalScore.ToString();
+                        }
+                        if (Player != null)
+                            scoreText.text = cc.GetScore().ToString();
+                    }
+                    else
+                    {
+                        LoadNextScene();
+                    }
+                }
+                else
+                {
+                    if (cc.IsBlockDestroyed())
+                        sceneToLoad = LastLoadedScene + 1;
+                    else
+                        sceneToLoad = 1;
+
+                    endGradeTextTXT.fontSize += 2;
+                    if (sceneLoadTimer > 0)
+                        sceneLoadTimer -= 1.0f * Time.deltaTime;
+                    if (sceneToLoad != 0 && sceneLoadTimer <= 0)
+                    {
+                        SceneManager.LoadScene(sceneToLoad);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Scene4
+        ///
+        ////// SCENE 4
+        ///
+
+        if (LastLoadedScene == 4)
+        {
+            if (playerShouldInst)
+            {
+                cc.InstantiateBlock();
+                playerShouldInst = false;
+            }
+
+            if (startGameTimerStart)
+            {
+                if (startGameTimer > 0)
+                {
+                    flickerTimer++;
+                    startGameTimer -= 1.0f * Time.deltaTime;
+
+                    int randomizer = Random.Range(1, 10);
+
+                    if (randomizer >= 5)
+                    {
+                        if (avoidImageB.enabled == true)
+                            avoidImageB.enabled = false;
+                        else
+                            avoidImageB.enabled = true;
                     }
                 }
                 if (startGameTimer <= 0)
@@ -388,17 +520,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-        }
-        #endregion
-
-        #region Scene4
-        ///
-        ////// SCENE 4
-        ///
-
-        if (LastLoadedScene == 3)
-        {
-
         }
         #endregion
     }
@@ -702,6 +823,8 @@ public class GameManager : MonoBehaviour
         collectImageB.enabled = false;
         destroyImageA.enabled = false;
         destroyImageB.enabled = false;
+        avoidImageA.enabled = false;
+        avoidImageB.enabled = false;
     }
 
     public void MinusCollectable()
