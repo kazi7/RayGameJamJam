@@ -14,7 +14,7 @@ GameObject:
   - 114: {fileID: 11417924}
   - 54: {fileID: 5489376}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Player_backup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,7 +105,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   jumpStrength: 3000
-  interactSpeed: 0.2
+  attackTimerMax: 0.2
+  attackTimer: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
