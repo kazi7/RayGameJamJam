@@ -21,8 +21,9 @@ public class BALLOONMOVE : MonoBehaviour {
         if(changeDir)
         {
             dirX = Random.Range(-1,1);
+            dirZ = Random.Range(-1, 1);            
         }
-        Vector3 moveDirection = new Vector3(), 0, +Input.GetAxis("Vertical"));
+        Vector3 moveDirection = new Vector3(dirX, 0, dirZ);
 
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
         Vector3 movTest = moveDirection * moveSpeed * Time.deltaTime;
