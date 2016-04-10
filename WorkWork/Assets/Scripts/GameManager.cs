@@ -42,11 +42,14 @@ public class GameManager : MonoBehaviour
     Image destroyImageA;
     GameObject DestroyB;
     Image destroyImageB;
+    //GAME UI TIMERS
+    int flickerTimer;
 
     //COLLECTABLES
+    bool spawnCollectables;
     public List<GameObject> collectables;
     public int collectablesAmount = 10;
-    private int collectablesLeft;
+    int collectablesLeft;
 
     //GAME END
     public int origFontSize;
@@ -94,13 +97,30 @@ public class GameManager : MonoBehaviour
             {
                 if (startGameTimer > 0)
                 {
+                    flickerTimer++;
                     startGameTimer -= 1.0f * Time.deltaTime;
 
+                    int randomizer = Random.Range(1, 10);
+
+                    if (randomizer >= 5)
+                    {
+                        if (collectImageB.enabled == true)
+                            collectImageB.enabled = false;
+                        else
+                            collectImageB.enabled = true;
+                    }
+                }
+                if (startGameTimer <= 0)
+                {
+                    spawnCollectables = true;
+                    startGameTimerStart = false;
                 }
             }
 
             if (startGameTimer <= 0)
             {
+                HideIntro();
+
                 if (!waitForNextScene)
                 {
                     if (!loadNextScene)
@@ -109,10 +129,11 @@ public class GameManager : MonoBehaviour
                         {
                             TimerBehavior();
 
-                            if (Input.GetKeyDown(KeyCode.Return))
+                            if (spawnCollectables)
                             {
                                 SpawnCollectables();
                                 startTimer = true;
+                                spawnCollectables = false;
                             }
 
                             if (collectablesLeft == 0 && startTimer)
@@ -202,14 +223,33 @@ public class GameManager : MonoBehaviour
         {
             SceneStart();
             startGameTimerStart = true;
-            switch(level)
+
+
+            AudioSource audio;
+            switch (level)
             {
                 case 2:
-
+                    {
+                        collectImageA.enabled = true;
+                        collectImageB.enabled = false;
+                        audio = CollectA.GetComponent<AudioSource>();
+                        audio.Play();
+                        print("SHOULD HEAR SOUND");
+                    }
                     break;
                 case 3:
+                    {
+                        destroyImageA.enabled = true;
+                        destroyImageB.enabled = false;
+                        audio = destroyImageA.GetComponent<AudioSource>();
+                        audio.Play();
+                        print("SHOULD HEAR SOUND");
+                    }
                     break;
                 case 4:
+                    {
+
+                    }
                     break;
             }
         }
@@ -240,6 +280,7 @@ public class GameManager : MonoBehaviour
         waitForNextScene = false;
         startSceneLoadTimer = false;
         startGameTimerStart = false;
+        spawnCollectables = false;
 
         //Initialize values
         timer = 10.0f;
@@ -250,8 +291,9 @@ public class GameManager : MonoBehaviour
         startFinalScoreTimer = timersValues;
         GradeTimer = timersValues;
         sceneLoadTimer = timersValues;
-        startGameTimer = 2.0f;
+        startGameTimer = 3.7f;
         sceneToLoad = 1;
+        flickerTimer = 0;
 
         collectablesLeft = collectablesAmount;
     }
@@ -460,6 +502,14 @@ public class GameManager : MonoBehaviour
         endBonusTitleTXT = endBonusTitleGO.GetComponent<Text>();
 
         createCanvas = false;
+    }
+
+    void HideIntro()
+    {
+        collectImageA.enabled = false;
+        collectImageB.enabled = false;
+        destroyImageA.enabled = false;
+        destroyImageB.enabled = false;
     }
 
     public void MinusCollectable()
