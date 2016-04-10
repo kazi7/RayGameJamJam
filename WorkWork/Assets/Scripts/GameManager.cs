@@ -81,6 +81,12 @@ public class GameManager : MonoBehaviour
     private bool startSceneLoadTimer;
     private int sceneToLoad;
 
+    //SCENE 3
+    bool wasDestroyed;
+    GameObject block;
+    BlockController bc;
+    bool playerShouldInst;
+
     void Awake()
     {
         DontDestroyOnLoad(transform.gameObject);
@@ -90,19 +96,23 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CreateListOfGrades();
+        playerShouldInst = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (LastLoadedScene >= 2)
+        #region Scene2
+        if (LastLoadedScene == 2)
         {
             if (startGameTimerStart)
             {
                 if (startGameTimer > 0)
                 {
                     flickerTimer++;
-                    startGameTimer -= 1.0f * Time.deltaTime;                    int randomizer = Random.Range(1, 10);
+                    startGameTimer -= 1.0f * Time.deltaTime;                    
+                    
+                    int randomizer = Random.Range(1, 10);
 
                     switch(LastLoadedScene)
                     {
@@ -181,7 +191,7 @@ public class GameManager : MonoBehaviour
 
                             if (createCanvas && !startTimer)
                                 CreateEndCanvas();
-                            if (collectablesLeft > 0)
+                            if (!wasDestroyed)
                                 finishTitleTXT.text = "END";
 
                             CalculateTimers();
@@ -232,6 +242,11 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    if (collectablesLeft <= 0)
+                        sceneToLoad = LastLoadedScene + 1;
+                    else
+                        sceneToLoad = 1;
+
                     endGradeTextTXT.fontSize += 2;
                     if (sceneLoadTimer > 0)
                         sceneLoadTimer -= 1.0f * Time.deltaTime;
@@ -242,6 +257,150 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+        #endregion
+
+        #region Scene3
+        ///
+        ////// SCENE 3
+        ///
+
+        if (LastLoadedScene == 3)
+        {
+            if(playerShouldInst)
+            {
+                cc.InstantiateBlock();
+                playerShouldInst = false;
+            }
+
+            if (startGameTimerStart)
+            {
+                if (startGameTimer > 0)
+                {
+                    flickerTimer++;
+                    startGameTimer -= 1.0f * Time.deltaTime;
+
+                    int randomizer = Random.Range(1, 10);
+
+                    if (randomizer >= 5)
+                    {
+                        if (destroyImageB.enabled == true)
+                            destroyImageB.enabled = false;
+                        else
+                            destroyImageB.enabled = true;
+                    }
+                }
+                if (startGameTimer <= 0)
+                {
+                    startGameTimerStart = false;
+                }
+            }
+
+            if (startGameTimer <= 0)
+            {
+                HideIntro();
+
+                if (!waitForNextScene)
+                {
+                    if (!loadNextScene)
+                    {
+                        if (!endGame)
+                        {
+                            TimerBehavior();
+
+                            startTimer = true;
+
+                            if (cc.IsBlockDestroyed())
+                            {
+                                GameOver();
+                            }
+                        }
+                        if (endGame)
+                        {
+                            //END GAME
+
+                            int tempCounter = 5;
+                            cc.EndGame();
+
+                            if (createCanvas && !startTimer)
+                                CreateEndCanvas();
+                            if (!cc.IsBlockDestroyed())
+                                finishTitleTXT.text = "END";
+
+                            CalculateTimers();
+
+                            bool calculationFinished = cc.CalculateScore(tempCounter);
+                            if (!calculationFinished)
+                            {
+                                finalScore += tempCounter;
+                            }
+                            else
+                            {
+                                startBonusTimer = true;
+                            }
+
+                            int bonus = 0;
+
+                            if (calculationFinished && bonusTimer <= 0)
+                            {
+                                endScoreTitleTXT.text = "SCORE";
+                                bonus = 1 + (int)timer;
+                                string bonusCoefficent = bonus.ToString() + "x";
+                                endBonusTitleTXT.text = bonusCoefficent;
+                                startFinalScoreCalc = true;
+                                calculationFinished = false;
+                            }
+                            if (startFinalScoreTimer <= 0 && !skipFinalScoreCalc)
+                            {
+                                finalScore *= bonus;
+                                endScoreTextTXT.fontSize = 40;
+                                startGradeTimer = true;
+                                skipFinalScoreCalc = true;
+                            }
+                            if (GradeTimer <= 0)
+                            {
+                                ChooseGradeText();
+                                loadNextScene = true;
+                                startSceneLoadTimer = true;
+                            }
+                            endScoreTextTXT.text = finalScore.ToString();
+                        }
+                        if (Player != null)
+                            scoreText.text = cc.GetScore().ToString();
+                    }
+                    else
+                    {
+                        LoadNextScene();
+                    }
+                }
+                else
+                {
+                    if (cc.IsBlockDestroyed())
+                        sceneToLoad = LastLoadedScene + 1;
+                    else
+                        sceneToLoad = 1;
+
+                    endGradeTextTXT.fontSize += 2;
+                    if (sceneLoadTimer > 0)
+                        sceneLoadTimer -= 1.0f * Time.deltaTime;
+                    if (sceneToLoad != 0 && sceneLoadTimer <= 0)
+                    {
+                        SceneManager.LoadScene(sceneToLoad);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region Scene4
+        ///
+        ////// SCENE 4
+        ///
+
+        if (LastLoadedScene == 3)
+        {
+
+        }
+        #endregion
     }
 
     void OnLevelWasLoaded(int level)
@@ -272,20 +431,21 @@ public class GameManager : MonoBehaviour
                         destroyImageB.enabled = false;
                         audio = destroyImageA.GetComponent<AudioSource>();
                         audio.Play();
+                        playerShouldInst = true;
                     }
                     break;
                 case 4:
                     {
-
+                        avoidImageA.enabled = true;
+                        avoidImageB.enabled = false;
+                        audio = avoidImageA.GetComponent<AudioSource>();
+                        audio.Play();
                     }
                     break;
             }
         }
 
-        if (collectablesLeft <= 0)
-            sceneToLoad = level + 1;
-        else
-            sceneToLoad = 1;
+        LastLoadedScene = level;
     }
 
     void SceneStart()
@@ -455,9 +615,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < collectablesAmount; i++)
         {
             GameObject go = (GameObject)Instantiate(Resources.Load("orb"));
-            float tempX = Random.Range(-15, 15);
-            float tempZ = Random.Range(-10, 10);
-            go.transform.position = new Vector3(tempX, 0, tempZ);
+            int tempX = Random.Range(-14, 14);
+            int tempZ = Random.Range(-14, 14);
+            go.transform.position = new Vector3(tempX, 1, tempZ);
             collectables.Add(go);
         }
     }

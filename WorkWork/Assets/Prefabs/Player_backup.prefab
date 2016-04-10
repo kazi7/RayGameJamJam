@@ -107,6 +107,7 @@ MonoBehaviour:
   jumpStrength: 3000
   attackTimerMax: 0.2
   attackTimer: 0
+  punchingForce: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
