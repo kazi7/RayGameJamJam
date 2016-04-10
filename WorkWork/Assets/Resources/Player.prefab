@@ -13,6 +13,7 @@ GameObject:
   - 23: {fileID: 2370762}
   - 114: {fileID: 11487226}
   - 54: {fileID: 5494634}
+  - 95: {fileID: 9517408}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -92,6 +93,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &9517408
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 132946}
+  m_Enabled: 1
+  m_Avatar: {fileID: 9000000, guid: f7e5a32a9dd42264eb9bd0b9e1922816, type: 3}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &11487226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -105,7 +123,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   jumpStrength: 3000
-  interactSpeed: 0.2
+  attackTimerMax: 0.2
+  attackTimer: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

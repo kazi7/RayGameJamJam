@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour
@@ -10,7 +11,6 @@ public class PlayerController : MonoBehaviour
     public float attackTimerMax = 0.2f;
     public float attackTimer;
 
-
     private bool canJump;
 
     private Quaternion targetRotation;
@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
 
     private bool endGame;
 
+    //ANIMATIONS
+    Animator anim;
+
     // Use this for initialization
     void Start()
     {
@@ -27,8 +30,9 @@ public class PlayerController : MonoBehaviour
         gm = GameObject.Find("Manager");
         endGame = false;
         canJump = true;
-
         attackTimer = attackTimerMax;
+
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -88,6 +92,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonUp("Fire1"))
         {
             attackTimer = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(1);
         }
     }
 

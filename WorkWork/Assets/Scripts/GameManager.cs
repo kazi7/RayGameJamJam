@@ -42,6 +42,10 @@ public class GameManager : MonoBehaviour
     Image destroyImageA;
     GameObject DestroyB;
     Image destroyImageB;
+    GameObject AvoidA;
+    Image avoidImageA;
+    GameObject AvoidB;
+    Image avoidImageB;
     //GAME UI TIMERS
     int flickerTimer;
 
@@ -98,16 +102,43 @@ public class GameManager : MonoBehaviour
                 if (startGameTimer > 0)
                 {
                     flickerTimer++;
-                    startGameTimer -= 1.0f * Time.deltaTime;
+                    startGameTimer -= 1.0f * Time.deltaTime;                    int randomizer = Random.Range(1, 10);
 
-                    int randomizer = Random.Range(1, 10);
-
-                    if (randomizer >= 5)
+                    switch(LastLoadedScene)
                     {
-                        if (collectImageB.enabled == true)
-                            collectImageB.enabled = false;
-                        else
-                            collectImageB.enabled = true;
+                        case 2:
+                            {
+                                if (randomizer >= 5)
+                                {
+                                    if (collectImageB.enabled == true)
+                                        collectImageB.enabled = false;
+                                    else
+                                        collectImageB.enabled = true;
+                                }
+                            }
+                            break;
+                        case 3:
+                            {
+                                if (randomizer >= 5)
+                                {
+                                    if (destroyImageB.enabled == true)
+                                        destroyImageB.enabled = false;
+                                    else
+                                        destroyImageB.enabled = true;
+                                }
+                            }
+                            break;
+                        case 4:
+                            {
+                                if (randomizer >= 5)
+                                {
+                                    if (avoidImageB.enabled == true)
+                                        avoidImageB.enabled = false;
+                                    else
+                                        avoidImageB.enabled = true;
+                                }
+                            }
+                            break;
                     }
                 }
                 if (startGameTimer <= 0)
@@ -143,7 +174,7 @@ public class GameManager : MonoBehaviour
                         }
                         if (endGame)
                         {
-                            //do stuff on endgame
+                            //END GAME
 
                             int tempCounter = 5;
                             cc.EndGame();
@@ -224,7 +255,6 @@ public class GameManager : MonoBehaviour
             SceneStart();
             startGameTimerStart = true;
 
-
             AudioSource audio;
             switch (level)
             {
@@ -234,7 +264,6 @@ public class GameManager : MonoBehaviour
                         collectImageB.enabled = false;
                         audio = CollectA.GetComponent<AudioSource>();
                         audio.Play();
-                        print("SHOULD HEAR SOUND");
                     }
                     break;
                 case 3:
@@ -243,7 +272,6 @@ public class GameManager : MonoBehaviour
                         destroyImageB.enabled = false;
                         audio = destroyImageA.GetComponent<AudioSource>();
                         audio.Play();
-                        print("SHOULD HEAR SOUND");
                     }
                     break;
                 case 4:
@@ -317,6 +345,10 @@ public class GameManager : MonoBehaviour
         destroyImageA = DestroyA.GetComponent<Image>();
         DestroyB = GameObject.Find("DestroyB");
         destroyImageB = DestroyB.GetComponent<Image>();
+        AvoidA = GameObject.Find("AvoidA");
+        avoidImageA = AvoidA.GetComponent<Image>();
+        AvoidB = GameObject.Find("AvoidB");
+        avoidImageB = AvoidB.GetComponent<Image>();
     }
 
     void CalculateTimers()

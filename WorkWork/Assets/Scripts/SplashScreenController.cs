@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SplashScreenController : MonoBehaviour
 {
-    public float loadTimer = 3.0f;
+    float loadTimer = 5.0f;
 
     // Use this for initialization
 	void Start () {
