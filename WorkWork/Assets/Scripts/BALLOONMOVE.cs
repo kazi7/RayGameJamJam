@@ -1,37 +1,71 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BALLOONMOVE : MonoBehaviour {
+public class BALLOONMOVE : MonoBehaviour
+{
 
     float moveSpeed;
     bool changeDir;
     float dirX, dirZ;
 
-	// Use this for initialization
-	void Start () {
+    float timer;
+
+    // Use this for initialization
+    void Start()
+    {
+        timer = 0;
+
         moveSpeed = Random.Range(6, 16);
         changeDir = false;
-        dirX = 0.0f;
-        dirZ = 0.0f;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+        int rand = Random.Range(1, 10);
 
-        if(changeDir)
+        if (rand >= 5)
         {
-            dirX = Random.Range(-1,1);
-            dirZ = Random.Range(-1, 1);            
+            dirX = -1;
+            dirZ = -1;
         }
-        Vector3 moveDirection = new Vector3(dirX, 0, dirZ);
+        if (rand < 5)
+        {
+            dirX = 1;
+            dirZ = -1;
+        }
+    }
 
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
-        Vector3 movTest = moveDirection * moveSpeed * Time.deltaTime;
-	}
+    // Update is called once per frame
+    void Update()
+    {
+        timer += 1.0f * Time.deltaTime;
+
+        if (changeDir)
+        {
+            if (dirX == -1 && dirZ == -1)
+            {
+                dirX = 1;
+                dirZ = 1;
+                changeDir = false;
+            }
+            else if (dirX == 1 && dirZ == 1)
+            {
+                dirX = -1;
+                dirZ = -1;
+                changeDir = false;
+            }
+        }
+        if (timer >= 1.0f)
+        {
+            Vector3 moveDirection = new Vector3(dirX, 0, dirZ);
+
+            transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        }
+        
+    }
 
     void OnCollisionEnter(Collision coll)
     {
+        print("COLLIDED");
         if (coll.transform.tag == "wall")
             changeDir = true;
+        if (coll.transform.tag == "balloon")
+            timer = 0;
     }
 }

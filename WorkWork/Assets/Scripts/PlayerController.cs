@@ -119,7 +119,6 @@ public class PlayerController : MonoBehaviour
                 isBlockDestroyed = true;
             }
         }
-        print(blockHealth);
     }
 
     void OnCollisionEnter(Collision coll)
