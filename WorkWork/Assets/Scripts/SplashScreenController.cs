@@ -16,6 +16,14 @@ public class SplashScreenController : MonoBehaviour
         loadTimer -= 1.0f * Time.deltaTime;
 
         if (loadTimer <= 0)
-            SceneManager.LoadScene("MainMenu");
+            LoadMenu();
+
+        if (Input.anyKey)
+            LoadMenu();
 	}
+
+    void LoadMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
