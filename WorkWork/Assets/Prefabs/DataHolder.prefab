@@ -8,7 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 468766}
-  - 114: {fileID: 11458352}
+  - 114: {fileID: 11477732}
   m_Layer: 0
   m_Name: DataHolder
   m_TagString: Untagged
@@ -28,7 +28,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11458352
+--- !u!114 &11477732
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -36,9 +36,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 187576}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 178bd22fdc4ee21489c864cc363d0533, type: 3}
+  m_Script: {fileID: 11500000, guid: 5caed6d9fa22d864ca2afe6c72449d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 0}
+  cc: {fileID: 0}
+  timer: 0
+  canvasTimerText: {fileID: 0}
+  timerText: {fileID: 0}
+  canvasScoreText: {fileID: 0}
+  scoreText: {fileID: 0}
+  origFontSize: 0
+  collectables: []
+  collectablesAmount: 5
+  grades: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

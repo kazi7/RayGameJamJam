@@ -7,7 +7,9 @@ public class PlayerController : MonoBehaviour
 
     public float moveSpeed = 5.0f;
     public float jumpStrength = 10.0f;
-    public float interactSpeed = 0.2f;
+    public float attackTimerMax = 0.2f;
+    public float attackTimer;
+
 
     private bool canJump;
 
@@ -18,21 +20,28 @@ public class PlayerController : MonoBehaviour
 
     private bool endGame;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
         rb = GetComponent<Rigidbody>();
         gm = GameObject.Find("Manager");
         endGame = false;
         canJump = true;
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+        attackTimer = attackTimerMax;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
         if (!endGame)
         {
             Controls();
+
+            if (attackTimer > 0)
+                attackTimer -= 1.0f * Time.deltaTime;
         }
-	}
+    }
 
     void OnCollisionEnter(Collision coll)
     {
@@ -67,6 +76,18 @@ public class PlayerController : MonoBehaviour
                 rb.AddForce(Vector3.up * jumpStrength);
                 canJump = false;
             }
+        }
+        if (attackTimer <= 0)
+        {
+            if (Input.GetButton("Fire1"))
+            {
+                attackTimer = attackTimerMax;
+                //ATTACK
+            }
+        }
+        if (Input.GetButtonUp("Fire1"))
+        {
+            attackTimer = 0;
         }
     }
 
