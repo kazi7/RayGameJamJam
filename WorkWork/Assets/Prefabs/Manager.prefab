@@ -41,14 +41,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Player: {fileID: 0}
   cc: {fileID: 0}
-  timer: 0
-  canvasTimerText: {fileID: 0}
-  timerText: {fileID: 0}
-  canvasScoreText: {fileID: 0}
-  scoreText: {fileID: 0}
-  origFontSize: 0
   collectables: []
   collectablesAmount: 5
+  origFontSize: 0
   grades: []
 --- !u!1001 &100100000
 Prefab:
